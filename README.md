@@ -39,7 +39,7 @@ make colima-start
 
 ### Linux
 
-Wir müssen einmal die SystemSettings patchen. 
+Wir müssen einmal die SystemSettings patchen.
 
 ```bash
 make patch-linux
