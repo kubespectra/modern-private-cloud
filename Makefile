@@ -200,4 +200,4 @@ $(MAKE) stop-tenant-cluster
 $(MAKE) stop-management-cluster
 ifeq ($(OS_NAME),darwin)
 	$(MAKE) colima-stop
-else
+endif
