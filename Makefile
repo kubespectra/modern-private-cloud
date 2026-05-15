@@ -176,11 +176,10 @@ tenant-cluster: ## create a worker-node for the tenant-cluster
 	docker exec -it tenant-node-1 /usr/local/bin/bootstrap-node.sh
 
 stop-tenant-cluster: ## stop the worker-node for the tenant-cluster
-	nerdctl stop tenant-node-1 -t 1
-	nerdctl rm tenant-node-1
+	docker stop tenant-node-1 -t 1
+	docker rm tenant-node-1
 
-### KUBEVIRT PART
-deploy-kubevirt:
+deploy-kubevirt: ## deploy kubevirt operator and kubevirt into the tenant cluster
 	export KUBECONFIG=$(KUBECONFIG_DIR)/tenant-cluster.yaml
 	@echo "Deploying kubevirt operator"
 	kubectl apply -f "./kubevirt/kubevirt-operator.yaml"
@@ -191,6 +190,14 @@ ifeq ($(ARCH),arm64)
 	kubectl patch kubevirt kubevirt -n kubevirt --type merge --patch '{"spec":{"configuration":{"developerConfiguration":{"useEmulation":false}}}}'
 endif
 
-deploy-vm:
+deploy-vm: ## deploy a test VM into the tenant cluster
 	export KUBECONFIG=$(KUBECONFIG_DIR)/tenant-cluster.yaml
 	kustomize build ./kubevirt/vm | kubectl apply -f -
+
+.PHONY: descruct
+destruct: ## Destuct environment
+$(MAKE) stop-tenant-cluster
+$(MAKE) stop-management-cluster
+ifeq ($(OS_NAME),darwin)
+	$(MAKE) colima-stop
+else
