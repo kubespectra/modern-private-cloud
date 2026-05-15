@@ -1,5 +1,12 @@
 # Modern Private Cloud
 
+Wir ziehen eine kleine modern Private Cloud hoch.
+
+## Hardware Requirements
+
+CPU: 4CPU
+RAM: 8GB
+
 ## Prerequisites
 
 Die installation der benötigten Tools ist abhängig des verwendeten Rechners. Im Allgemeinen wird jedoch `make` vorausgesetzt.
