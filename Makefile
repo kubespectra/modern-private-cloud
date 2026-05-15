@@ -1,6 +1,8 @@
 ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 KUBECONFIG_DIR := ./.kube
-ARCH := $(shell uname -m)
+OS_NAME := $(shell uname -s | tr '[:upper:]' '[:lower:]')
+ARCH := $(shell uname -m | sed 's/x86_64/amd64/' | sed 's/aarch64/arm64/')
+BIN_DIR := /usr/local/bin
 
 .PHONY: help colima-start management-cluster stop-management-cluster bootstrap-management-cluster rancher cert-manager metallb kamaji tenant-cp tenant-cluster stop-tenant-cluster
 
@@ -8,8 +10,52 @@ help: ## Shows this Help Message
 	@echo "Commands:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-install-mac:
-	brew upgrade docker docker-credential-helper kind kustomize helm kubectl jq virtctl
+.PHONY: install-tools
+install-tools: ## Installiert Tools (Mac: Brew, Linux: Binaries)
+ifeq ($(OS_NAME),darwin)
+	@echo "🍎 MacOS erkannt. Nutze Homebrew..."
+	brew upgrade docker docker-credential-helper kind kustomize helm kubectl jq virtctl || \
+	brew install docker docker-credential-helper kind kustomize helm kubectl jq virtctl
+else
+	@echo "🐧 Linux erkannt. Installiere statische Binaries für $(ARCH)..."
+
+	@command -v curl >/dev/null 2>&1 || (echo "❌ Fehler: 'curl' wird benötigt. Bitte installiere es über deinen Paketmanager."; exit 1)
+	@command -v jq >/dev/null 2>&1 || (echo "❌ Fehler: 'jq' wird benötigt. Bitte installiere es über deinen Paketmanager."; exit 1)
+
+	# KIND
+	@command -v kind >/dev/null 2>&1 || ( \
+		curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.24.0/kind-linux-$(ARCH) && \
+		chmod +x ./kind && sudo mv ./kind $(BIN_DIR)/kind )
+
+	# KUBECTL
+	@command -v kubectl >/dev/null 2>&1 || ( \
+		curl -LO "https://dl.k8s.io/release/$$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/$(ARCH)/kubectl" && \
+		chmod +x kubectl && sudo mv kubectl $(BIN_DIR)/kubectl )
+
+	# HELM
+	@command -v helm >/dev/null 2>&1 || ( \
+		curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash )
+
+	# KUSTOMIZE
+	@command -v kustomize >/dev/null 2>&1 || ( \
+		curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash && \
+		sudo mv kustomize $(BIN_DIR)/ )
+
+	# VIRTCTL
+	@command -v virtctl >/dev/null 2>&1 || ( \
+		V=$$(curl -s https://api.github.com/repos/kubevirt/kubevirt/releases/latest | jq -r .tag_name) && \
+		curl -LO https://github.com/kubevirt/kubevirt/releases/download/$$V/virtctl-$$V-linux-$(ARCH) && \
+		chmod +x virtctl-$$V-linux-$(ARCH) && \
+		sudo mv virtctl-$$V-linux-$(ARCH) $(BIN_DIR)/virtctl )
+
+	# DOCKER
+	@command -v docker >/dev/null 2>&1 || ( curl -fsSL https://get.docker.com | sh )
+	-sudo groupadd docker || true
+	-sudo usermod -aG docker $(USER) || true
+	newgrp docker
+
+endif
+	@echo "✅ Setup abgeschlossen."
 
 colima-stop: ## stop colima (MAC)
 	colima stop
@@ -31,6 +77,13 @@ patch-colima: ## patch colima network rules for kind (MAC)
 	colima ssh -- sudo sysctl -w fs.inotify.max_user_watches=1048576
 	colima ssh -- sudo modprobe br_netfilter
 	colima ssh -- sudo sh -c 'echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables'
+
+patch-linux: ## patch linux network rules
+	# SystemSettings
+	sudo sysctl -w fs.inotify.max_user_instances=1024
+	sudo sysctl -w fs.inotify.max_user_watches=1048576
+	sudo modprobe br_netfilter
+	sudo sh -c 'echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables'
 
 management-cluster: ## start management cluster
 	kind create cluster --config management/kind-config.yaml
@@ -140,4 +193,4 @@ endif
 
 deploy-vm:
 	export KUBECONFIG=$(KUBECONFIG_DIR)/tenant-cluster.yaml
-	kubectl apply -f "./kubevirt/vm/vm.yaml"
+	kustomize build ./kubevirt/vm | kubectl apply -f -
