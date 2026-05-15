@@ -1,0 +1,1047 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Modern Private Cloud</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="dist/reveal.css" />
+  <link rel="stylesheet" href="dist/reset.css" />
+  <link rel="stylesheet" href="dist/theme/kubespectra.css" />
+  <style>
+    .reveal {
+      background-image: url("https://kubespectra.io/wp-content/uploads/Kubespectra-Header_neu.png");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .reveal section {
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <!-- Titel -->
+      <section>
+        <h2>Modern Private Cloud</h2>
+        <h4>kubespectra @ CloudLand</h4>
+      </section>
+
+      <!-- GIT Reference -->
+      <section>
+        <pre><code class="bash" data-trim>
+          git clone https://github.com/kubespectra/modern-private-cloud.git
+        </code></pre>
+      </section>
+
+      <!-- Agenda -->
+      <section>
+        <h2>Phases</h2>
+        <ul>
+          <li class="fragment">Phase 01: Digitale Souveränität</li>
+          <li class="fragment">Phase 02: Kubernetes als OS: Alles ist ein Objekt.</li>
+          <li class="fragment">Phase 03: Brain vs. Muscle: Management vs. Tenants.</li>
+          <li class="fragment">Phase 04: KubeVirt: VMs in Kubernetes.</li>
+          <li class="fragment">Phase 05: Unser Fahrplan: Von Null auf Cloud.</li>
+        </ul>
+      </section>
+
+      <!-- Phase 1: Digitale Souveränität -->
+      <section>
+        <section>
+          <p class="text-accent" style="letter-spacing: 0.3em; font-weight: bold;">PHASE 01</p>
+          <h2>Digitale Souveränität</h2>
+          <div style="width: 100px; height: 3px; background: var(--r-link-color); margin: 20px auto;"></div>
+          <p class="text-small">Die Private Cloud als strategische Antwort auf globale Abhängigkeiten</p>
+          <div class="nav-hint">
+            <i class="fas fa-chevron-down"></i> Vertikal navigieren für Strategie-Content
+          </div>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - Begrüßung: Wir bauen heute kein Cluster, sondern eine Institution für Souveränität.
+            - Public Cloud ist oft Bequemlichkeit gegen Abhängigkeit.
+            - Unser Ziel: Die Bequemlichkeit der Cloud auf die eigene Hardware bringen.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small text-accent">Marktdynamik</h2>
+          <p>Warum der Status Quo ein Geschäftsrisiko geworden ist</p>
+          <div class="flex-row" style="margin-top: 40px;">
+            <div class="column-box" style="border-left: 4px solid #ef4444;">
+              <h4 class="text-small" style="color: #ef4444;">Die Konsolidierungs-Falle</h4>
+              <p class="text-xsmall">Proprietäre Hyper-Monopolisten ändern radikal die Spielregeln. Wer keine
+                Alternative hat, verliert die Kontrolle über:</p>
+              <ul class="text-xsmall">
+                <li><strong>Opex-Stabilität:</strong> Unvorhersehbare Lizenzänderungen (Broadcom/VMware).</li>
+                <li><strong>Innovations-Tempo:</strong> Man wartet auf Features des Herstellers statt selbst zu bauen.
+                </li>
+                <li><strong>Technologische Freiheit:</strong> Lock-in in geschlossene Ökosysteme.</li>
+              </ul>
+            </div>
+          </div>
+          <aside class="notes">
+            Redepunkte (3-4 Min):
+            - Infrastruktur ist kein IT-Thema mehr, sondern ein CFO-Thema.
+            - Broadcom war der Weckruf. Wir brauchen eine "Exit-Strategie als Standard".
+            - Open Source (KubeVirt/Kamaji) bietet genau diese Portabilität.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Cloud vs. Virtualisierung</h2>
+          <p class="text-small">Fünf Merkmale einer echten Private Cloud</p>
+          <div
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 0.4em; text-align: left; margin-top: 30px;">
+            <div class="column-box"><strong>1. On-Demand Self-Service</strong><br>Nutzer provisionieren ohne
+              IT-Interaktion.</div>
+            <div class="column-box"><strong>2. Broad Network Access</strong><br>Zugriff über Standard-Protokolle
+              (API-First).</div>
+            <div class="column-box"><strong>3. Resource Pooling</strong><br>Multi-Tenancy und effiziente
+              Hardware-Ausnutzung.</div>
+            <div class="column-box"><strong>4. Rapid Elasticity</strong><br>Skalierung in Sekunden statt Tagen.</div>
+            <div class="column-box"><strong>5. Measured Service</strong><br>Verbrauch ist messbar und transparent.</div>
+          </div>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - Viele nennen ihre VM-Farm "Cloud". Aber ohne Self-Service und APIs ist es nur Virtualisierung.
+            - Wir wollen heute alle 5 Merkmale auf eurem Laptop/Server abbilden.
+            - Das ist der psychologische Shift vom "Admin" zum "Provider".
+          </aside>
+        </section>
+
+        <section>
+          <h2>Infrastruktur-Abstraktion</h2>
+          <p class="text-small">Die 3 Säulen der API-basierten Cloud</p>
+          <div class="flex-row" style="margin-top: 50px;">
+            <div class="column-box" style="text-align: center;">
+              <i class="fas fa-server text-accent" style="font-size: 1.5em; margin-bottom: 15px;"></i>
+              <h4 class="text-xsmall">COMPUTE</h4>
+              <p style="font-size: 0.35em;">Container & VMs als gleichwertige Ressourcen (KubeVirt).</p>
+            </div>
+            <div class="column-box" style="text-align: center;">
+              <i class="fas fa-network-wired text-accent" style="font-size: 1.5em; margin-bottom: 15px;"></i>
+              <h4 class="text-xsmall">NETWORK</h4>
+              <p style="font-size: 0.35em;">Software-Defined Networking & Loadbalancing via MetalLB, kube-ovn.</p>
+            </div>
+            <div class="column-box" style="text-align: center;">
+              <i class="fas fa-hdd text-accent" style="font-size: 1.5em; margin-bottom: 15px;"></i>
+              <h4 class="text-xsmall">STORAGE</h4>
+              <p style="font-size: 0.35em;">Dynamische Provisionierung via CSI & Operatoren.</p>
+            </div>
+          </div>
+          <p class="text-xsmall mt-20">Alles wird über <span class="text-accent">YAML-Manifeste</span> gesteuert.</p>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - Kubernetes ist das Interface.
+            - Es spricht mit dem Hypervisor, dem Router und dem Speicher-System.
+            - Der Mensch verschwindet aus der direkten Konfiguration der Hardware.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Souveränität durch Standards</h2>
+          <p class="text-small">Kubernetes als universelle Sprache</p>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px;">
+            <div class="column-box" style="text-align: center;">
+              <i class="fas fa-unlock text-accent" style="font-size: 1.2em; margin-bottom: 10px;"></i>
+              <h4 class="text-xsmall">K8S API</h4>
+              <p style="font-size: 0.35em;">Der globale Standard für Infrastruktur-Steuerung.</p>
+            </div>
+            <div class="column-box" style="text-align: center;">
+              <i class="fas fa-terminal text-accent" style="font-size: 1.2em; margin-bottom: 10px;"></i>
+              <h4 class="text-xsmall">GIT-CONTROL</h4>
+              <p style="font-size: 0.35em;">Infrastruktur wird wie App-Code versioniert und geprüft.</p>
+            </div>
+            <div class="column-box" style="text-align: center;">
+              <i class="fas fa-project-diagram text-accent" style="font-size: 1.2em; margin-bottom: 10px;"></i>
+              <h4 class="text-xsmall">NO BLACKBOX</h4>
+              <p style="font-size: 0.35em;">Jederzeitiger Wechsel der Hardware/Cloud möglich.</p>
+            </div>
+          </div>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - Wenn wir Kubernetes nutzen, lernen wir eine Sprache, die überall funktioniert (AWS, Azure, On-Prem).
+            - Das ist die ultimative Souveränität: Das Wissen und die Manifeste sind portabel.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Platform Economy</h2>
+          <p class="text-small text-accent">Vom nackten Node zum Managed Service</p>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+            <div class="fragment"
+              style="background: rgba(255,255,255,0.03); padding: 10px; border-left: 3px solid var(--r-link-color); text-align: left;">
+              <p class="text-xsmall" style="margin: 0;"><strong>Level 1: IaaS</strong> - On-Demand VMs & Networking</p>
+            </div>
+            <div class="fragment"
+              style="background: rgba(255,255,255,0.03); padding: 10px; border-left: 3px solid var(--r-link-color); text-align: left;">
+              <p class="text-xsmall" style="margin: 0;"><strong>Level 2: CaaS</strong> - Cluster-as-a-Service
+              </p>
+            </div>
+            <div class="fragment"
+              style="background: rgba(108, 168, 183, 0.1); padding: 10px; border-left: 3px solid var(--r-link-color); text-align: left;">
+              <p class="text-xsmall" style="margin: 0;"><strong>Level 3: Managed Services</strong> - DBs, Kafka, S3 via
+                Operatoren</p>
+            </div>
+          </div>
+          <p class="text-xsmall mt-20 text-muted">Ziel: Infrastruktur-Teams werden zu Produkt-Teams.</p>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - Eine Cloud ist erst wertvoll, wenn sie Dienste anbietet.
+            - Wir nutzen Kubernetes Operatoren, um Experten-Wissen in Code zu gießen.
+            - Das Admin-Team baut den Katalog, der Nutzer konsumiert ihn.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small">Business Case</h2>
+          <p>Innovation vs. Instandhaltung</p>
+          <div class="flex-row">
+            <div class="column-box" style="flex: 1.5;">
+              <h4 class="text-xsmall">Managed Services On-Premise</h4>
+              <p style="font-size: 0.35em; line-height: 1.8;">Wir hören auf, "Server zu pflegen". Wir fangen an,
+                <strong>Dienste</strong> anzubieten:
+              </p>
+              <ul style="font-size: 0.3em; color: var(--r-main-color);">
+                <li>Datenbanken als Service (Postgres Operator)</li>
+                <li>S3 Speicher als Service (SeaweedFS)</li>
+                <li>Compute als Service (KubeVirt VMs)</li>
+              </ul>
+            </div>
+            <div class="column-box" style="flex: 1;">
+              <h4 class="text-xsmall text-accent">Demografischer Faktor</h4>
+              <p style="font-size: 0.3em; line-height: 1.6;">Junge Talente lernen keine vSphere-Konsole mehr. Sie lernen
+                APIs, GitOps und Kubernetes. Wir sichern die Betriebsfähigkeit der Zukunft.</p>
+            </div>
+          </div>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - Ein wichtiger Punkt: Der Fachkräftemangel.
+            - Wir müssen den Arbeitsplatz "Rechenzentrum" modernisieren, um attraktiv zu bleiben.
+            - Automatisierung mit Operatoren ersetzt das manuelle "Klicken" von Experten.
+          </aside>
+        </section>
+
+
+        <section>
+          <h2>Die Roadmap</h2>
+          <p class="text-small">Vom Mindset zur Implementierung</p>
+          <div
+            style="display: grid; grid-template-columns: auto 1fr; gap: 30px; text-align: left; font-size: 0.55em; max-width: 800px; margin: 0 auto;">
+            <div class="text-accent font-bold">PHASE 1</div>
+            <div><strong>Souveränität & Strategie:</strong> Warum wir heute hier sind. (Check)</div>
+            <div class="text-accent font-bold">PHASE 2-3</div>
+            <div><strong>Infrastruktur-Boot:</strong> Wir wecken die Hardware und bauen das "Gehirn".</div>
+            <div class="text-accent font-bold">PHASE 4-5</div>
+            <div><strong>Cloud-Betrieb:</strong> Wir provisionieren Tenants und starten unsere Workloads.</div>
+          </div>
+          <div class="fragment" style="margin-top: 50px; border-top: 1px solid var(--r-link-color); padding-top: 20px;">
+            <p class="text-small text-accent">Bereit für den technischen Sprung?</p>
+          </div>
+          <aside class="notes">
+            Redepunkte (2 Min):
+            - Zusammenfassung: Wir haben den Kopf bereit.
+            - Wir wissen jetzt, warum wir nicht nur VMware kopieren, sondern etwas Besseres bauen.
+            - Gehen wir ins Terminal. Phase 2 beginnt.
+          </aside>
+        </section>
+      </section>
+
+      <!-- Phase 2: Host & Infrastruktur -->
+      <section>
+        <section>
+          <p class="text-accent" style="letter-spacing: 0.3em; font-weight: bold;">PHASE 02</p>
+          <h2>Host & Infrastruktur</h2>
+          <div style="width: 100px; height: 3px; background: var(--r-link-color); margin: 20px auto;"></div>
+          <p class="text-small">Hardware-Ressourcen in das K8s-Objektmodell überführen</p>
+          <div class="nav-hint">
+            <i class="fas fa-chevron-down"></i> Vertikal eintauchen für technische Details
+          </div>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - Wir verlassen die Theorie.
+            - Kubernetes als OS bedeutet: Wir müssen dem Betriebssystem beibringen, wie es Hardware-Fähigkeiten (wie
+            Virtualisierung) als steuerbare Objekte bereitstellt.
+            - Phase 2 bereitet die "Leitungen" vor, durch die später die YAML-Befehle fließen.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small text-accent">Kubernetes als OS</h2>
+          <p>Warum wir den Host "patchen" müssen</p>
+          <div
+            style="background: rgba(255,255,255,0.03); padding: 30px; border-radius: 12px; text-align: left; font-size: 0.6em;">
+            <p>In einer klassischen Welt ist Virtualisierung eine Applikation. In unserer Welt ist sie eine
+              <strong>Kernel-Capability</strong>, die durch Kubernetes-Controller orchestriert wird:
+            </p>
+            <ul style="margin-top: 20px; line-height: 1.8;">
+              <li><span class="text-accent">CPU/RAM:</span> Werden zu <strong>Allocatable Resources</strong> im
+                Node-Objekt.</li>
+              <li><span class="text-accent">Network:</span> Brücken & Filter werden zu
+                <strong>NetworkAttachmentDefinitions</strong>.
+              </li>
+              <li><span class="text-accent">Virtualization:</span> Das KVM-Device wird zum <strong>Device
+                  Plugin</strong>.</li>
+            </ul>
+          </div>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - Erkläre den Shift: Wir patchen nicht den Host, um eine VM zu starten, sondern um dem K8s-Scheduler zu
+            sagen, was er mit der Hardware tun darf.
+            - Ohne Inotify-Patches oder Bridge-Module "sieht" Kubernetes die Hardware nicht korrekt.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small text-accent">Hypervisor-Vorbereitung</h2>
+          <p>Die zwei Wege zur Nested Virtualization</p>
+          <div class="flex-row">
+            <div class="column-box">
+              <h4 class="text-small"><i class="fab fa-apple"></i> Mac M4 (VZ)</h4>
+              <p class="text-xsmall">Nutzt <strong>Colima</strong> mit Apple VZ. Wir schalten das
+                <code>--nested-virtualization</code> Flag frei.
+              </p>
+            </div>
+            <div class="column-box accent-border">
+              <h4 class="text-small"><i class="fab fa-linux"></i> Linux (KVM)</h4>
+              <p class="text-xsmall">Wir laden <code>kvm_intel/amd</code> und setzen <code>br_netfilter</code> für das
+                SDN.</p>
+            </div>
+          </div>
+          <p class="text-xsmall mt-20">Ziel: Das <code>/dev/kvm</code> Device muss für Container verfügbar werden.</p>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - Hier erklärst du den Unterschied in der Rüstzeit.
+            - Apple VZ (Virtualization.framework) ist der moderne Weg für ARM.
+            - Unter Linux nutzen wir das klassische KVM, müssen aber die Bridge-Filter aktivieren, damit
+            Kubernetes-Netzwerke (wie Flannel/Calico) funktionieren.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Tooling-Installation</h2>
+          <p class="text-small">Sicherstellen der CLI-Interoperabilität</p>
+          <pre><code class="bash" data-trim>
+    # Idempotenter Check & Installation
+    make install-tools
+    </code></pre>
+          <div
+            style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 30px; font-size: 0.4em; text-align: left;">
+            <div class="column-box"><strong>virtctl:</strong> Das Äquivalent zu kubectl, aber für das
+              Lifecycle-Management von VMs (Start, Stop, Console).</div>
+            <div class="column-box"><strong>kind:</strong> Erzeugt die "Inception-Nodes", in denen später unsere
+              Cloud-Infrastruktur lebt.</div>
+          </div>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - Wir installieren keine schweren Applikationen, sondern nur kleine Binaries.
+            - Das Makefile erkennt, ob ihr auf ARM (M4) oder x86 seid und zieht das korrekte Binary.
+            - Erinnere die Leute daran: Dies ist der letzte Moment für schnelles WLAN!
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small text-accent">Technisches Schichtenmodell</h2>
+          <p>Vom Silizium zur virtuellen Maschine</p>
+          <div class="flex-col">
+            <div class="arch-muscle" style="border: 1px solid var(--r-link-color); padding: 10px; font-size: 0.4em;">
+              <p><strong>L3: KubeVirt VM</strong> (Infrastruktur als Objekt)</p>
+              <div style="border-top: 1px dashed #444; margin: 10px 0;"></div>
+              <p><strong>L2: Kind Node</strong> (Container-basiertes OS)</p>
+              <div style="border-top: 1px dashed #444; margin: 10px 0;"></div>
+              <p><strong>L1: Docker / Colima</strong> (Hypervisor-Layer)</p>
+              <div style="border-top: 1px dashed #444; margin: 10px 0;"></div>
+              <p><strong>L0: Mac M4 / Linux Host</strong> (Hardware)</p>
+            </div>
+          </div>
+          <p class="text-xsmall mt-20 text-muted">Phase 2 bereitet L0 und L1 für den Durchgriff von L3 vor.</p>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - Erkläre die Komplexität: Wir reichen die Hardware-Beschleunigung durch drei Schichten.
+            - Wenn eine Schicht das KVM-Flag verliert, bricht die Performance von L3 zusammen.
+            - Wir nutzen heute "vz" auf dem Mac, um diese Kette stabil zu halten.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Hands-On</h2>
+          <p class="text-small">Hardware-Tunnel aktivieren</p>
+          <div class="flex-row">
+            <div class="column-box">
+              <h4 class="text-xsmall">MacOS (Colima)</h4>
+              <pre><code class="bash">make colima-start</code></pre>
+            </div>
+            <div class="column-box">
+              <h4 class="text-xsmall">Linux (Patches)</h4>
+              <pre><code class="bash">make patch-linux</code></pre>
+            </div>
+          </div>
+          <p class="text-xsmall mt-40">Status prüfen: <code>docker info | grep -i virtualization</code></p>
+          <aside class="notes">
+            Redepunkte (1 Min):
+            - Startet die Befehle jetzt.
+            - Wer Probleme mit sudo-Rechten hat, bitte jetzt melden.
+            - In Phase 3 bauen wir darauf das Management-Cluster auf.
+          </aside>
+        </section>
+      </section>
+
+      <!-- Phase 3: Management Cluster -->
+      <section>
+        <section>
+          <p class="text-accent" style="letter-spacing: 0.3em; font-weight: bold;">PHASE 03</p>
+          <h2>Management Cluster</h2>
+          <div style="width: 100px; height: 3px; background: var(--r-link-color); margin: 20px auto;"></div>
+          <p class="text-small">Bootstrapping des "Brains" – Der Kontrollturm der Infrastruktur</p>
+          <div class="nav-hint">
+            <i class="fas fa-chevron-down"></i> Vertikal eintauchen für den Cluster-Build
+          </div>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - Wir bauen jetzt das Management Cluster.
+            - Das ist der "Tower": Von hier aus sehen und steuern wir alles.
+            - Es hostet nicht eure Apps, sondern die Controller für eure Apps (Rancher, Kamaji, MetalLB).
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small text-accent">Bootstrap: Kind Cluster</h2>
+          <p>Die Geburtsstunde der Management-Ebene</p>
+          <pre><code class="bash" data-trim>
+    make management-cluster
+    </code></pre>
+          <div class="column-box" style="margin-top: 30px;">
+            <h4 class="text-xsmall">Was passiert im Hintergrund?</h4>
+            <ul class="text-xsmall">
+              <li>Wir deployen einen Kind Cluster.</li>
+              <li>MacOS: wir patchen uns einmal die Netzrouten: '<code>make patch-colima</code>'</li>
+            </ul>
+          </div>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - Erkläre, warum wir Kind nutzen: Es ist schnell und perfekt für die lokale Demo.
+            - Wichtig: Wir routen Netzwerk bereits hier, damit das Management-Cluster weiß, wie es mit
+            Virtualisierung umgehen soll.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small text-accent">Bootstrap: Kind Cluster</h2>
+          <p>Die Geburtsstunde der Management-Services</p>
+          <pre><code class="bash" data-trim>
+    make bootstrap-management-cluster
+    </code></pre>
+          <div class="column-box" style="margin-top: 30px;">
+            <h4 class="text-xsmall">Was passiert im Hintergrund?</h4>
+            <ul class="text-xsmall">
+              <li>Wir deployen cert-manager, metallb</li>
+              <li>Rancher (Management-UI)</li>
+              <li>Kamaji (Cluster-Operator)</li>
+            </ul>
+          </div>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - Hier installieren wir die "Gehirn-Services". Sie laufen alle im Management-Cluster, nicht in den Tenants.
+            - cert-manager sorgt für TLS-Zertifikate, MetalLB für Netzwerk, Rancher für die UI und Kamaji für die
+            Cluster-Orchestrierung.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small text-accent">Rancher Integration</h2>
+          <p>Die visuelle Kontrollebene</p>
+
+          <div class="flex-row" style="margin-top: 20px;">
+            <div class="column-box accent-border"
+              style="min-height: 350px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4);">
+              <div style="text-align: center;">
+                <i class="fas fa-image" style="font-size: 3em; color: var(--r-link-color); margin-bottom: 15px;"></i>
+                <p class="text-xsmall"><strong>[SCREENSHOT: Rancher Dashboard / Multi-Cluster Overview]</strong></p>
+                <p style="font-size: 0.25em; color: var(--text-dim);">Hier wird das Rancher Dashboard eingefügt, das den
+                  Management-Cluster anzeigt.</p>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xsmall mt-20">Rancher dient als Aggregator für alle Cluster-Lebenszyklen und RBAC-Richtlinien.
+          </p>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - Rancher ist unser grafisches Fenster in die Cloud.
+            - Wir importieren hier nicht nur Cluster, wir verwalten Identitäten.
+            - Erkläre, dass Rancher heute als Standard für Multi-Cluster Management gilt.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small text-accent">Networking: MetalLB</h2>
+          <p>Loadbalancing im lokalen Netzwerk</p>
+          <div style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 12px; text-align: left;">
+            <p class="text-xsmall">Ohne eine Public-Cloud (AWS/GCP) fehlen uns externe IPs. MetalLB löst dies lokal:</p>
+            <ul class="text-xsmall" style="line-height: 1.8; margin-top: 15px;">
+              <li><strong>L2 Mode:</strong> MetalLB "announct" IP-Adressen per ARP im Docker-Netzwerk.</li>
+              <li><strong>Service Type LoadBalancer:</strong> Unsere Cloud-Services erhalten echte, erreichbare IPs.
+              </li>
+              <li><strong>IP-Pool:</strong> Wir reservieren ein Subnetz aus dem Docker-Bereich (z.B. 172.18.255.x).</li>
+            </ul>
+          </div>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - MetalLB ist der "Networking-Enabler".
+            - In einer Private Cloud müssen wir das IP-Management selbst lösen.
+            - Das ist der Moment, in dem die Cloud "erreichbar" wird.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small text-accent">Kamaji Engine</h2>
+          <p>Vom Cluster zum Cluster-Operator</p>
+          <div class="flex-col">
+            <div class="arch-brain" style="width: 70%; border-radius: 15px;">
+              <p class="text-xsmall"><strong>Kamaji Controller</strong></p>
+              <p style="font-size: 0.25em; color: var(--r-link-color);">Überwacht den "Desired State" der
+                Tenant-Cluster.</p>
+            </div>
+            <div style="color: var(--r-link-color);"><i class="fas fa-plus"></i></div>
+            <div class="column-box" style="width: 70%; font-size: 0.35em;">
+              <p>Kamaji verwandelt das Management-Cluster in eine <strong>Cluster-Fabrik</strong>. Jede neue
+                Kunden-Anforderung wird als <code>TenantControlPlane</code> Objekt im Management-Cluster definiert.</p>
+            </div>
+          </div>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - Kamaji ist der Star dieser Show.
+            - Wir installieren hier die Controller, die später die Control Planes der Tenants (API, etcd) als einfache
+            Pods im Management-Cluster starten.
+            - Das ist echte "Cloud-Native" Architektur: Infrastruktur-Provisionierung via Controller-Pattern.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small">Status-Check</h2>
+          <p>Verifizierung der Management-Services</p>
+
+          <div class="flex-row">
+            <div class="column-box accent-border" style="background: rgba(10, 24, 40, 0.6);">
+              <h4 class="text-xsmall">Services OK?</h4>
+              <ul class="text-xsmall">
+                <li>[ ] Rancher UI (Port 443) erreichbar?</li>
+                <li>[ ] MetalLB Speaker/Controller running?</li>
+                <li>[ ] Kamaji Manager aktiv?</li>
+              </ul>
+            </div>
+            <div class="column-box"
+              style="min-height: 200px; display: flex; align-items: center; justify-content: center;">
+              <div style="text-align: center;">
+                <i class="fas fa-desktop" style="font-size: 2em; color: var(--r-link-color); margin-bottom: 10px;"></i>
+                <p class="text-xsmall"><strong>[SCREENSHOT: kubectl get pods -A]</strong></p>
+              </div>
+            </div>
+          </div>
+          <aside class="notes">
+            Redepunkte (2 Min):
+            - Bevor wir Phase 4 (Tenants) starten, müssen alle Lichter im Management auf Grün stehen.
+            - Prüft euer Terminal.
+            - Jetzt sind wir bereit, die erste "Kunden-Cloud" zu erschaffen.
+          </aside>
+        </section>
+      </section>
+      <!-- Phase 4: Tenant Provisioning -->
+      <section>
+        <section>
+          <p class="text-accent" style="letter-spacing: 0.3em; font-weight: bold;">PHASE 04</p>
+          <h2>Tenant Provisioning</h2>
+          <div style="width: 100px; height: 3px; background: var(--r-link-color); margin: 20px auto;"></div>
+          <p class="text-small">Das "Birth-Event" der isolierten Kunden-Cloud</p>
+          <div class="nav-hint">
+            <i class="fas fa-chevron-down"></i> Vertikal eintauchen für den Deployment-Prozess
+          </div>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - Jetzt skalieren wir. Wir erstellen ein Tenant-Cluster.
+            - Das ist der Moment, in dem ein Cloud-Provider auf "Cluster erstellen" klickt.
+            - Wir machen das rein deklarativ über ein YAML-Manifest.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small text-accent">Die Hürde</h2>
+          <p>Networking & Nesting unter Kind</p>
+          <div class="flex-row">
+            <div class="column-box" style="border-left: 4px solid #f59e0b;">
+              <h4 class="text-small" style="color: #f59e0b;">Warum es tricky ist</h4>
+              <ul class="text-xsmall">
+                <li><strong>MTU-Probleme:</strong> Pakete in Containern in Containern.</li>
+                <li><strong>IP-Routing:</strong> Docker-Netzwerk vs. MetalLB.</li>
+                <li><strong>Kind-Mangement</strong> kind will eigentlich keine reinen Worker-Nodes unterstützen</li>
+              </ul>
+            </div>
+            <div class="column-box accent-border">
+              <h4 class="text-small">Unsere Lösung</h4>
+              <p class="text-xsmall">Wir haben ein <strong>Custom-Scripting</strong> und spezielle
+                <strong>Kind-Configs</strong> vorbereitet, die diese Hürden für euch wegabstrahieren.
+              </p>
+            </div>
+          </div>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - Hier erklärst du das "Vorbereitete".
+            - Kind ist kein Produktions-Tool, aber mit dem richtigen Patching (MTU 1400 etc.) simulieren wir hier eine
+            echte Bare-Metal Umgebung.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Control-Plane-as-a-Service</h2>
+          <p class="text-small">Kamaji erzeugt die Tenant-API</p>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;">
+            <div class="column-box" style="text-align: left;">
+              <p class="text-xsmall" style="color: var(--r-link-color);"><strong>Management Cluster:</strong></p>
+              <p style="font-size: 0.3em;">Hosted die <code>TenantControlPlane</code> Objekte als reguläre
+                K8s-Workloads.</p>
+            </div>
+            <div class="column-box" style="text-align: left;">
+              <p class="text-xsmall" style="color: var(--r-link-color);"><strong>Tenant Cluster:</strong></p>
+              <p style="font-size: 0.3em;">Besteht nur aus Worker-Nodes. Keine Master-VMs nötig.</p>
+            </div>
+          </div>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - Dies ist der Kern der Effizienz.
+            - Wir sparen Ressourcen, weil die schwere Control-Plane (etcd, API-Server) als leichtgewichtige Pods im
+            Brain läuft.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Hands-On: Tenant Start</h2>
+          <p class="text-small">Wir provisionieren jetzt das Cluster "Alpha"</p>
+          <pre><code class="bash" data-trim>
+    make bootstrap-tenant-cluster
+    </code></pre>
+          <div style="margin-top: 30px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
+            <p class="text-xsmall"><strong>Verfolgt den Prozess:</strong></p>
+            <p style="font-size: 0.3em; color: var(--r-link-color);">kubectl get tcp -A (TenantControlPlanes)</p>
+            <p style="font-size: 0.3em; color: var(--r-link-color);">kubectl get pods -n tenant-alpha</p>
+          </div>
+          <div class="column-box" style="margin-top: 30px;">
+            <h4 class="text-xsmall">Was passiert im Hintergrund?</h4>
+            <ul class="text-xsmall">
+              <li>Wir deployen eine Tenant-Control-Plane</li>
+              <li>Wir Joinen einen leeren kind-Worker-Node</li>
+              <li>Wir konfigurieren das CNI und den CoreDNS</li>
+            </ul>
+          </div>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - Lasst die Teilnehmer den Befehl ausführen.
+            - Erkläre, dass Kamaji jetzt automatisch Zertifikate generiert und den API-Server hochfährt.
+            - Sobald die MetalLB-IP zugewiesen ist, können sich die Worker-Nodes verbinden.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small">Sichtbarkeit</h2>
+          <p>Das neue Cluster im Rancher-Dashboard</p>
+
+          <div class="flex-row">
+            <div class="column-box accent-border"
+              style="min-height: 300px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4);">
+              <div style="text-align: center;">
+                <i class="fas fa-image" style="font-size: 3em; color: var(--r-link-color); margin-bottom: 15px;"></i>
+                <p class="text-xsmall"><strong>[SCREENSHOT: Rancher Dashboard - Tenant Cluster "kubevirt" ist
+                    Ready]</strong></p>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xsmall mt-20">Wir haben nun zwei getrennte Welten: <strong>Management</strong> (Infrastructure)
+            und <strong>Tenant</strong> (Workload).</p>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - Zeige im Screenshot (oder Live), dass Rancher das neue Cluster jetzt als "Active" anzeigt.
+            - Das ist der Beweis, dass unsere "Cloud-Fabrik" funktioniert.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Checkpoint Delta</h2>
+          <p class="text-small">Sind alle Cluster "Green"?</p>
+          <div class="flex-row">
+            <div class="column-box text-xsmall" style="text-align: left;">
+              <p><i class="fas fa-check text-accent"></i> Tenant-API erreichbar</p>
+              <p><i class="fas fa-check text-accent"></i> Worker-Nodes gejoined</p>
+              <p><i class="fas fa-check text-accent"></i> Rancher Import erfolgreich</p>
+            </div>
+          </div>
+          <div class="fragment" style="margin-top: 40px; border-top: 1px solid var(--r-link-color); padding-top: 20px;">
+            <h4 class="text-accent">Ready for Compute?</h4>
+            <p class="text-xsmall">In Phase 5 starten wir echte VMs in dieser neuen Umgebung.</p>
+          </div>
+          <aside class="notes">
+            Redepunkte (2 Min):
+            - Wir haben jetzt eine funktionierende Kubernetes-as-a-Service Plattform.
+            - Im nächsten Schritt (Phase 5) nutzen wir diese Plattform, um KubeVirt zum Leben zu erwecken.
+          </aside>
+        </section>
+      </section>
+
+
+      <!-- Phase 5: Compute & Workload -->
+      <section>
+        <section>
+          <p class="text-accent" style="letter-spacing: 0.3em; font-weight: bold;">PHASE 05</p>
+          <h2>Compute & Workload</h2>
+          <div style="width: 100px; height: 3px; background: var(--r-link-color); margin: 20px auto;"></div>
+          <p class="text-small">KubeVirt: Das Betriebssystem für virtuelle Maschinen auf Kubernetes</p>
+          <div class="nav-hint">
+            <i class="fas fa-chevron-down"></i> Vertikal eintauchen für Installation & Launch
+          </div>
+          <aside class="notes">
+            Redepunkte (2 Min):
+            - Wir haben jetzt ein leeres Kubernetes-Cluster (den Tenant).
+            - Jetzt "lehren" wir diesem Cluster Virtualisierung.
+            - Das Ziel: Die VM wird zu einem nativen K8s-Objekt.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small text-accent">Deployment</h2>
+          <p>Installation des KubeVirt Stacks</p>
+          <pre><code class="bash" data-trim>
+    make deploy-kubevirt
+    </code></pre>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;">
+            <div class="column-box" style="text-align: left; font-size: 0.35em;">
+              <p class="text-accent"><strong>Virt-Operator:</strong></p>
+              <p>Überwacht den Zustand des KubeVirt-Stacks und kümmert sich um Updates und Rollouts.</p>
+            </div>
+            <div class="column-box" style="text-align: left; font-size: 0.35em;">
+              <p class="text-accent"><strong>Virt-Handler:</strong></p>
+              <p>Läuft als DaemonSet auf jedem Worker und spricht direkt mit dem lokalen KVM/Libvirt.</p>
+            </div>
+          </div>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - KubeVirt ist kein monolithisches Programm. Es ist eine Cloud-Native Applikation.
+            - Der Operator sorgt dafür, dass die Virtualisierung im Cluster "gesund" bleibt.
+            - Dank deiner Vorbereitung ist das ein Einzeiler, aber unter der Haube werden hunderte Objekte erzeugt.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small text-accent">Workload Definition</h2>
+          <p>Vom YAML zur Hardware</p>
+          <pre><code class="bash" data-trim>
+    make deploy-vm
+    </code></pre>
+          <div class="flex-row" style="margin-top: 20px;">
+            <div class="column-box accent-border" style="font-size: 0.35em; text-align: left;">
+              <p><strong>Was wird hier definiert?</strong></p>
+              <ul>
+                <li>CPU/RAM Allocation</li>
+                <li>Boot-Source (ContainerDisk/Registry)</li>
+                <li>Cloud-Init Config (SSH Keys & Networking)</li>
+              </ul>
+            </div>
+          </div>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - Die VM existiert jetzt im "Stopped"-Zustand als Objekt in der Datenbank (etcd).
+            - Wir nutzen Container-Images für die Festplatten. Keine mühsame ISO-Installation mehr.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Action: Ignition</h2>
+          <p class="text-small">Den Hypervisor im Pod anwerfen</p>
+          <pre><code class="bash" data-trim>
+    virtctl start testvm -n testvm
+    </code></pre>
+          <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; margin-top: 30px;">
+            <p class="text-xsmall" style="color: var(--r-link-color);">Monitoring des Boot-Vorgangs:</p>
+            <p style="font-size: 0.3em;">kubectl get vmi (VirtualMachineInstance)</p>
+            <p style="font-size: 0.3em;">kubectl get pods (Suche nach virt-launcher-*)</p>
+          </div>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - Jetzt wird es spannend. Der `virt-launcher` Pod startet.
+            - Schaut euch die Logs des Pods an – dort seht ihr, wie QEMU initialisiert wird.
+            - Wir haben jetzt eine VM in einem Pod in einem Container auf eurem Host.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small text-accent">Interaktion</h2>
+          <p>Zugriff auf das System</p>
+          <div class="flex-row">
+            <div class="column-box" style="flex: 1;">
+              <p class="text-xsmall"><strong>Serielle Konsole</strong></p>
+              <pre><code class="bash">virtctl console [VM_NAME]</code></pre>
+            </div>
+            <div class="column-box" style="flex: 1;border-left: 4px solid #f59e0b;">
+              <p class="text-xsmall"><strong>Grafisches VNC</strong></p>
+              <pre><code class="bash">virtctl vnc [VM_NAME]</code></pre>
+            </div>
+          </div>
+          <p class="text-xsmall mt-20">Der Tunnel wird sicher über die Kubernetes-API geroutet.</p>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - Geht mal mit `virtctl console` rein.
+            - Ihr seht den Linux-Bootvorgang wie an einem echten Monitor.
+            - Das ist der Beweis: Die Virtualisierungskette (L0 bis L3) ist geschlossen.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small">Operations</h2>
+          <p>Zusammenführung der Welten im Dashboard</p>
+
+          <div class="flex-row">
+            <div class="column-box accent-border"
+              style="min-height: 300px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4);">
+              <div style="text-align: center;">
+                <i class="fas fa-image" style="font-size: 3em; color: var(--r-link-color); margin-bottom: 15px;"></i>
+                <p class="text-xsmall"><strong>[SCREENSHOT: Rancher UI - Laufende KubeVirt VM]</strong></p>
+                <p style="font-size: 0.25em; color: var(--text-dim);">Zeige hier die VM-Liste im Tenant-Cluster.</p>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-xsmall mt-20 text-accent">Herzlichen Glückwunsch: Du betreibst deine eigene Cloud-Native
+            Private Cloud.</p>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - Schaut in Rancher. Die VM taucht dort als Workload auf.
+            - Wir können hier Ressourcen-Limits setzen oder Snapshots machen.
+            - Das ist modernstes Platform Engineering auf eurem Schoß.
+          </aside>
+        </section>
+      </section>
+
+      <!-- Abschluss & Q&A -->
+
+      <section>
+        <section>
+          <p class="text-accent" style="letter-spacing: 0.3em; font-weight: bold;">PHASE 06</p>
+          <h2>Operations & Ausblick</h2>
+          <div style="width: 100px; height: 3px; background: var(--r-link-color); margin: 20px auto;"></div>
+          <p class="text-small">Vom Proof-of-Concept zur Enterprise Private Cloud</p>
+          <div class="nav-hint">
+            <i class="fas fa-chevron-down"></i> Vertikal eintauchen für die Vision
+          </div>
+          <aside class="notes">
+            Redepunkte (2 Min):
+            - Wir haben es geschafft: Hardware prep, Management Tower, Tenant Cluster und die erste VM.
+            - Aber ein lokales Setup ist nur der Anfang.
+            - Wie sieht die "Real World" Architektur aus, wenn wir 1000 VMs und 50 Cluster verwalten?
+          </aside>
+        </section>
+
+        <section data-transition="zoom">
+          <h3 class="text-small text-accent">Full Stack Orchestrierung</h3>
+
+          <div class="arch-master-container"
+            style="display: flex; flex-direction: column; align-items: center; gap: 40px; margin-top: 20px; perspective: 1000px;">
+
+            <div class="arch-box-management"
+              style="width: 70%; background: rgba(10, 24, 40, 0.95); border: 2px solid var(--r-link-color); border-radius: 15px; padding: 25px; box-shadow: 0 0 30px rgba(108, 168, 183, 0.3);">
+              <div
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(108, 168, 183, 0.3); padding-bottom: 15px; margin-bottom: 15px;">
+                <h4 style="margin:0; font-size: 0.7em;" class="text-accent">MANAGEMENT Cluster</h4>
+                <div style="font-size: 0.4em; color: var(--r-main-color);">Kamaji Orchestrator • Rancher Manager</div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 5px; font-size: 0.3em;">
+                  TCP Alpha <br><span style="color: var(--r-link-color);">Running Pod</span></div>
+                <div
+                  style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 5px; font-size: 0.3em; border: 1px dashed var(--r-link-color);">
+                  TCP Beta <br><span style="color: var(--r-link-color);">Running Pod</span></div>
+                <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 5px; font-size: 0.3em;">
+                  TCP Storage <br><span style="color: var(--r-link-color);">Running Pod</span></div>
+              </div>
+            </div>
+
+            <svg width="600" height="60" style="margin: -20px 0;">
+              <line x1="300" y1="0" x2="300" y2="60" stroke="#6CA8B7" stroke-width="2" />
+              <line x1="100" y1="30" x2="500" y2="30" stroke="#6CA8B7" stroke-width="2" />
+              <line x1="100" y1="30" x2="100" y2="60" stroke="#6CA8B7" stroke-width="2" />
+              <line x1="500" y1="30" x2="500" y2="60" stroke="#6CA8B7" stroke-width="2" />
+            </svg>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%;">
+
+              <div class="tenant-cluster"
+                style="background: rgba(255,255,255,0.02); border: 1px solid #444; border-radius: 10px; padding: 15px;">
+                <p style="font-size: 0.35em; font-weight: bold; margin-bottom: 10px;">TENANT CLUSTER ALPHA</p>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                  <div
+                    style="background: var(--r-link-color); color: #000; font-size: 0.25em; padding: 5px; border-radius: 3px; font-weight: bold;">
+                    <i class="fas fa-server"></i> Ubuntu VM (KubeVirt)
+                  </div>
+                  <div
+                    style="background: rgba(255,255,255,0.1); color: #fff; font-size: 0.25em; padding: 5px; border-radius: 3px;">
+                    <i class="fas fa-cube"></i> Nginx Pod (Container)
+                  </div>
+                </div>
+              </div>
+
+              <div class="tenant-cluster"
+                style="background: rgba(255,255,255,0.02); border: 1px solid #444; border-radius: 10px; padding: 15px;">
+                <p style="font-size: 0.35em; font-weight: bold; margin-bottom: 10px;">TENANT CLUSTER BETA</p>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                  <div
+                    style="background: var(--r-link-color); color: #000; font-size: 0.25em; padding: 5px; border-radius: 3px; font-weight: bold;">
+                    <i class="fas fa-database"></i> Database VM (Legacy)
+                  </div>
+                  <div
+                    style="background: var(--r-link-color); color: #000; font-size: 0.25em; padding: 5px; border-radius: 3px; font-weight: bold;">
+                    <i class="fas fa-server"></i> Windows VM (KubeVirt)
+                  </div>
+                </div>
+              </div>
+
+              <div class="tenant-cluster"
+                style="background: rgba(255,255,255,0.02); border: 1px solid #444; border-radius: 10px; padding: 15px;">
+                <p style="font-size: 0.35em; font-weight: bold; margin-bottom: 10px;">TENANT CLUSTER Storage</p>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                  <div
+                    style="background: rgba(255,255,255,0.1); color: #fff; font-size: 0.25em; padding: 5px; border-radius: 3px;">
+                    <i class="fas fa-cube"></i> CNPG-Operator (Cloud-Native Postgres)
+                  </div>
+                  <div
+                    style="background: rgba(255,255,255,0.1); color: #fff; font-size: 0.25em; padding: 5px; border-radius: 3px;">
+                    <i class="fas fa-cube"></i> SeaweedFS (Cloud-Native Storage)
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <aside class="notes">
+            Redepunkte (5-7 Min):
+            - Hier sehen wir das Big Picture: Eine "Cluster-Fabrik".
+            - Oben das Management-Cluster: Es hostet keine App-Workloads, sondern die Control-Planes der Kunden (TCP
+            Pods).
+            - Von hier aus haben wir die volle Lifecycle-Kontrolle.
+            - Unten die Tenants: Völlig isolierte Welten.
+            - Wichtig: In jedem Cluster können wir entscheiden: Braucht die App eine VM (Legacy/KubeVirt) oder reicht
+            ein Pod (Cloud-Native)?
+            - Alles nutzt dieselbe API, dasselbe Netzwerk-Modell und dasselbe Storage.
+          </aside>
+        </section>
+
+        <section>
+          <h2 class="text-small text-accent">Scaling & Operations</h2>
+          <p>Was fehlt zur Enterprise-Readiness?</p>
+          <div class="flex-row">
+            <div class="column-box" style="text-align: left;">
+              <h4 class="text-xsmall">Storage (SDS)</h4>
+              <p style="font-size: 0.3em;">Live-Migration von VMs benötigt Shared Storage.
+                <strong>Rook/Ceph/Longhorn</strong>
+                ist hier der Goldstandard für K8s-Native Storage.</p>
+            </div>
+            <div class="column-box" style="text-align: left;">
+              <h4 class="text-xsmall">Networking (BGP)</h4>
+              <p style="font-size: 0.3em;">In der Produktion nutzen wir MetalLB im <strong>BGP Mode</strong>, um Routen
+                direkt an die Core-Switche zu übergeben.</p>
+            </div>
+          </div>
+          <div class="column-box accent-border" style="margin-top: 20px; text-align: left;">
+            <h4 class="text-xsmall">Backup & DR</h4>
+            <p style="font-size: 0.3em;"><strong>Velero</strong> ermöglicht konsistente Backups von App-Daten UND
+              VM-Snapshots direkt in den S3-Speicher.</p>
+          </div>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - Wir haben heute L2-Networking genutzt. Im RZ nehmen wir BGP für echte Hochverfügbarkeit.
+            - VM-Migration (vMotion Äquivalent) funktioniert in KubeVirt perfekt, solange der Storage "shared" ist.
+          </aside>
+        </section>
+
+        <section>
+          <h2>GitOps Lifecycle</h2>
+          <p class="text-small text-accent">Infrastruktur-Management ohne `kubectl`</p>
+
+          <div style="background: rgba(255,255,255,0.03); padding: 25px; border-radius: 12px; margin-top: 30px;">
+            <p class="text-xsmall">Das finale Ziel ist <strong>Zero-Touch Operations</strong>:</p>
+            <ul class="text-xsmall" style="line-height: 1.8;">
+              <li>Ein neuer Tenant wird per Pull-Request definiert.</li>
+              <li><strong>GITOPS</strong> erkennt die Änderung und triggert Kamaji.</li>
+              <li>Das Cluster entsteht automatisch inkl. Monitoring & Security-Policies.</li>
+            </ul>
+          </div>
+          <aside class="notes">
+            Redepunkte (4 Min):
+            - Wir wollen am Ende gar nicht mehr manuell im Terminal arbeiten.
+            - Das Repository ist die "Single Source of Truth".
+            - Wer darf ein Cluster löschen? Wer darf eine VM starten? Alles über Git-PRs und Code-Reviews gesteuert.
+          </aside>
+        </section>
+
+        <section>
+          <h2>Zusammenfassung</h2>
+          <p class="text-small">Eure eigene Private Cloud Journey</p>
+          <div class="flex-row">
+            <div style="flex: 1; font-size: 0.45em; text-align: left; line-height: 1.6;">
+              <p><i class="fas fa-check text-accent"></i> <strong>Unabhängigkeit:</strong> Exit-Strategie von VMware
+                erfolgreich getestet.</p>
+              <p><i class="fas fa-check text-accent"></i> <strong>Effizienz:</strong> Eine API für Container und
+                Legacy-VMs.</p>
+              <p><i class="fas fa-check text-accent"></i> <strong>Zukunft:</strong> Ihr seid bereit für Platform
+                Engineering.</p>
+            </div>
+          </div>
+          <div style="margin-top: 60px; border-top: 1px solid var(--r-link-color); padding-top: 30px;">
+            <h3 class="text-accent">Vielen Dank!</h3>
+            <p class="text-xsmall">Fragen? Zeit für Diskussion & Deep Dives.</p>
+          </div>
+          <aside class="notes">
+            Redepunkte (3 Min):
+            - Schlusssatz: Ihr habt heute bewiesen, dass man ein Rechenzentrum auf einem Laptop simulieren kann.
+            - Diese Technologie skaliert linear.
+            - Nutzt die restliche Zeit für individuelle Fragen.
+          </aside>
+        </section>
+      </section>
+
+
+      <section>
+        <h2>The End of To-Do Lists</h2>
+        <p class="text-small">Vielen Dank für eure Teilnahme!</p>
+        <div style="margin-top: 50px;">
+          <p class="text-small text-accent">Ihr seid jetzt bereit, eure eigene Private Cloud zu skalieren.</p>
+        </div>
+        <div
+          style="border: 1px solid var(--r-link-color); padding: 20px; border-radius: 15px; background: rgba(108, 168, 183, 0.05); margin-top: 50px;">
+          <p class="text-xsmall"><strong>Next Steps:</strong> Checkt das Repository und erweitert das Konzept gerne.</p>
+        </div>
+      </section>
+
+
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script>
+    // More info about initialization & config:
+    // - https://revealjs.com/initialization/
+    // - https://revealjs.com/config/
+    Reveal.initialize({
+      hash: true,
+      // Learn about plugins: https://revealjs.com/plugins/
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+    });
+  </script>
+</body>
+
+</html>
