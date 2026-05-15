@@ -2,19 +2,40 @@
 
 ## Prerequisites
 
-Die installation der benötigten Tools ist abhängig des verwendeten Rechners. Mac wird hier `brew` nutzen, WSL2 und Linux sind hier identisch in der Konfiguration.
+Die installation der benötigten Tools ist abhängig des verwendeten Rechners. Im Allgemeinen wird jedoch `make` vorausgesetzt.
 
-### MacOS
+> WSL2 Support ist hier experimental und darf gerne hinzugefügt werden!
 
-Die Installation und Vorkonfiguration der MacOS spezifischen Tools wird mit folgenden beiden Befehlen gestartet.
+### Tools
 
-Unter Mac werden wir hier einmal die `colima` VM als Basis nutzen. Diese muss einmal eingerichtet werden.
+Die nötigen Tools werden je nach Umgebung (Linux|Mac) entsprechend automatisiert installiert.
+
+Für Mac nutzen wir den Installationsmanager `brew` für die Installation von allen benötigten Komponenten.
+
+- **MacOS**: wir nutzen hier `brew` für die Installation aller Tools
+- **Linux**: in Anlehnung an alle verfügbaren Distros werden wir hier statische Binaries verwenden.
 
 ```bash
 # Installation aller nötigen Tools
 make install-tools
+```
+
+### MacOS
+
+MacOS muss hier mit `colima` gestartet werden, da die Apple Container noch nicht so weit sind.
+Diese muss einmal eingerichtet und gestartet werden. (Wir verwenden hier 8GB RAM und 4 CPUs)
+
+```bash
 # Starten der Colima instanz
 make colima-start
+```
+
+### Linux
+
+Wir müssen einmal die SystemSettings patchen. 
+
+```bash
+make patch-linux
 ```
 
 Die verwendeten kubeconfigs werden hier immer im Repo (`.kube`) mit abgelegt werden. Die OrdnerStruktur wird definitiv mit angelegt, jedoch die kubeconfigs nie mit hochgeladen.
@@ -104,6 +125,5 @@ kubectl config set-context kubernetes-admin@kubevirt
 
 ````bash
 export KUBECONFIG=$(KUBECONFIG_DIR)/tenant-cluster.yaml
-kubectl apply -f "./kubevirt/vm-arm/vm.yaml"
+kustomize build ./kubevirt/vm | kubectl apply -f -
 ```
-
