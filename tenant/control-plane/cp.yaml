@@ -1,0 +1,30 @@
+apiVersion: kamaji.clastix.io/v1alpha1
+kind: TenantControlPlane
+metadata:
+  name: kubevirt
+  namespace: kubevirt-tenant
+spec:
+  dataStore: default # Muss existieren, standardmäßig 'default'
+  controlPlane:
+    deployment:
+      replicas: 1
+    service:
+      serviceType: LoadBalancer
+  networkProfile:
+    port: 30443
+    certSANs:
+    - rancher.cloud.land
+  addons:
+    coreDNS: {}
+    konnectivity:
+      server:
+        port: 8132
+      agent:
+        mode: DaemonSet
+  kubernetes:
+    version: "v1.34.0" # Version des Tenant-Clusters
+    kubelet:
+      configurationJSONPatches:
+        - op: "add"
+          path: "/cgroupDriver"
+          value: "systemd"

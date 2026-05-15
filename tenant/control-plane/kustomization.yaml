@@ -1,0 +1,5 @@
+namespace: kubevirt
+
+resources:
+  - namespace.yaml
+  - cp.yaml

@@ -1,0 +1,5 @@
+namespace: testvm
+
+resources:
+  - namespace.yaml
+  - vm.yaml

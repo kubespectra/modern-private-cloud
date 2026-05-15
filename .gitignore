@@ -1,0 +1,4 @@
+.kube/*.yaml
+.DS_Store
+slides
+
